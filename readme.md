@@ -39,6 +39,8 @@ Note: g++ also works although the warning options in build.sh will differ.
 
 ## Demo
 
+![preview.gif](/preview.gif?raw=true "Preview")
+
 ### Features
 - One player ship with 2 weapons
 - One boss with 3 attacks
