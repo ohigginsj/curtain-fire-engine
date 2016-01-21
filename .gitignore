@@ -1,0 +1,6 @@
+bin
+*.DS_Store
+*.swp
+
+debug.sh
+dev.sh
