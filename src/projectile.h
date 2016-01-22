@@ -418,19 +418,25 @@ UpdateProjectiles(game_state* GameState,
         if (Projectile->Active)
         {
             int32 ProjectileElapsed = Time - Projectile->CreationTime;
-            if (Projectile->UpdateFunction)
+
+            if (Projectile->FadingOut)
             {
-                Projectile->UpdateFunction(GameState, Projectile, ProjectileElapsed - Projectile->SpawnDelay);
-                if (!Projectile->Active)
+                if (Projectile->FadeOutEndTime == Time)
                 {
+                    DestroyProjectile(GameState, Projectile);
                     continue;
                 }
             }
-
-            if (Projectile->FadingOut && Projectile->FadeOutEndTime == Time)
+            else
             {
-                DestroyProjectile(GameState, Projectile);
-                continue;
+                if (Projectile->UpdateFunction)
+                {
+                    Projectile->UpdateFunction(GameState, Projectile, ProjectileElapsed - Projectile->SpawnDelay);
+                    if (!Projectile->Active)
+                    {
+                        continue;
+                    }
+                }
             }
 
             switch(Projectile->Type)

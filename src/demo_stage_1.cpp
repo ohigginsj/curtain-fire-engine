@@ -149,7 +149,6 @@ BossBehavior_Cirno_Spell2(game_state* GameState, boss* Boss, int32 Time)
             real32 Angle = AngleToPlayer + (AngleIncrement * Event_LoopIteration) - 180.0f;
             real32 Speed = 5.0f;
             real32 LaserLength = 200.0f;
-            //real32 LaserWidth = 15.0f;
             real32 LaserWidth = 13.0f;
             CreateLooseLaser(GameState,
                              GetPosition(Boss),

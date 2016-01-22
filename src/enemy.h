@@ -354,5 +354,6 @@ IsActive(boss* Boss)
 boss*
 GetBoss(game_state* GameState)
 {
+    // TODO: Safety...
     return GameState->World->Boss;
 }

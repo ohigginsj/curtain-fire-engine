@@ -29,11 +29,11 @@ PlatformMain
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
     Mix_AllocateChannels(64);
 
-    int32 WindowScale = 1;
+    int32 WindowScale = 2;
 
     SDL_Window* Window = SDL_CreateWindow(
         "Curtain Fire Engine",
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         LogicalWindowSizeX * WindowScale,
         LogicalWindowSizeY * WindowScale,
         SDL_WINDOW_OPENGL);

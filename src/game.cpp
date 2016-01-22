@@ -5,6 +5,7 @@
 #include "stb_image.h"
 
 #include "game.h"
+#include "world.h"
 #include "projectile.h"
 #include "player.h"
 #include "enemy.h"
@@ -156,27 +157,6 @@ MenuFunction_Dead_MainMenu(game_state* GameState)
 {
     BeginGameMode_MainMenu(GameState);
     return true;
-}
-
-void
-KillShip(game_state* GameState)
-{
-    game_mode_world* World = GameState->World;
-    ship* Ship = &World->Ships[World->Player->ShipId];
-    spatial* ShipSpatial = &Ship->Spatial;
-
-    ScreenShake(GameState->Renderer, 3.0f, 0.4f);
-    CreateParticle_Animated(World,
-                            ShipSpatial->Position,
-                            V2(0.0f, 0.0f),
-                            15, 1.0f,
-                            ColorSpec_None,
-                            50,
-                            AnimationSpecId_Explosion_0);
-
-    Ship->Dead = true;
-    World->ControlMode = ControlMode_DeathAnimation;
-    World->DeathAnimationTime = 40;
 }
 
 void
