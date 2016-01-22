@@ -1170,8 +1170,8 @@ Render(game_state* GameState)
                 text_renderer* TextRenderer = &Renderer->TextRenderer;
 #if 0
                 // Draw entire atlas
-		real32 X = TextEntry->Position.X;
-		real32 Y = TextEntry->Position.Y;
+                real32 X = TextEntry->Position.X;
+                real32 Y = TextEntry->Position.Y;
                 uint32 AtlasWidth = TextRenderer->FontAtlas.Width;
                 uint32 AtlasHeight = TextRenderer->FontAtlas.Height;
                 GLfloat Vertices[6][4] = {
@@ -1183,11 +1183,11 @@ Render(game_state* GameState)
                     { X + AtlasWidth, Y,          1.0, 1.0 },
                     { X + AtlasWidth, Y + AtlasHeight, 1.0, 0.0 }
                 };
-				glBindVertexArray(TextRenderer->VAO);
-				glBindBuffer(GL_ARRAY_BUFFER, TextRenderer->VBO);
+                glBindVertexArray(TextRenderer->VAO);
+                glBindBuffer(GL_ARRAY_BUFFER, TextRenderer->VBO);
                 glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Vertices), Vertices);
 
-				glBindTexture(GL_TEXTURE_2D, TextRenderer->FontAtlas.TextureId);
+                glBindTexture(GL_TEXTURE_2D, TextRenderer->FontAtlas.TextureId);
                 // Cleanup
                 glDrawArrays(GL_TRIANGLES, 0, 6);
 #else
