@@ -114,8 +114,6 @@ enum sound_id
     SoundId_ShotD,
     SoundId_ShotE,
 
-    SoundId_ShotPlayer,
-
     SoundId_Freeze,
 
     SoundId_LaserA,

@@ -114,7 +114,6 @@ DefineGame(game_state* GameState)
     LoadSound(GameState, SoundId_ShotC, "data/sounds/effects/shot3.wav");
     LoadSound(GameState, SoundId_ShotD, "data/sounds/effects/shot4.wav");
     LoadSound(GameState, SoundId_ShotE, "data/sounds/effects/shot5.wav");
-    LoadSound(GameState, SoundId_ShotPlayer, "data/sounds/effects/playershot.wav");
     LoadSound(GameState, SoundId_Freeze, "data/sounds/effects/freeze.wav");
     LoadSound(GameState, SoundId_LaserA, "data/sounds/effects/laser1.wav");
     LoadSound(GameState, SoundId_LaserB, "data/sounds/effects/laser2.wav");

@@ -626,8 +626,6 @@ UpdatePlayer(game_state* GameState,
             CurrentWeapon->FireCooldownRemaining = CurrentWeapon->FireCooldown;
             CurrentWeapon->Offset_Kickback.Y = CurrentWeapon->FireKickback;
             //ScreenShake(GameState->Renderer, 1.0f, 0.05f);
-
-            PlaySound(GameState, SoundId_ShotPlayer, 1.0f);
         }
     }
 
