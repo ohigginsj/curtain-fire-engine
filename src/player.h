@@ -584,44 +584,35 @@ UpdatePlayer(game_state* GameState,
         }
         if (Ship->Firing && Input->Z.Down)
         {
-            // Move this logic into a function pointer inside player_weapon struct
-
-            //if (Player->PlayerMode == PlayerMode_Normal)
-            //{
-                //CreateBulletArc(GameState, 3, PlayerSpatial->Position, 10.0f, BulletDirection, Player->FireSpeed, 20.0f, BulletSprite_Kunai_Red, 1, Team_Player);
-            //}
-            //else if (Player->PlayerMode == PlayerMode_Focus)
+            for (uint32 ShotIndex = 0;
+                 ShotIndex < CurrentWeapon->ShotCount;
+                 ++ShotIndex)
             {
-                for (uint32 ShotIndex = 0;
-                     ShotIndex < CurrentWeapon->ShotCount;
-                     ++ShotIndex)
-                {
-                    real32 PerturbedAngle = RandomPerturb(GameState, -90.0f, CurrentWeapon->Inaccuracy);
-                    v2 ShotPosition =
-                        ShipSpatial->Position +
-                        CurrentWeapon->ShotOffsets[ShotIndex] +
-                        CurrentWeapon->Offset_Delay +
-                        CurrentWeapon->Offset_Kickback;
+                real32 PerturbedAngle = RandomPerturb(GameState, -90.0f, CurrentWeapon->Inaccuracy);
+                v2 ShotPosition =
+                    ShipSpatial->Position +
+                    CurrentWeapon->ShotOffsets[ShotIndex] +
+                    CurrentWeapon->Offset_Delay +
+                    CurrentWeapon->Offset_Kickback;
 
-                    CreateBullet_Angle(GameState,
-                                       ShotPosition,
-                                       PerturbedAngle,
-                                       CurrentWeapon->FireSpeed,
-                                       0.0f, 0.0f,
-                                       0,
-                                       CurrentWeapon->ProjectileSpriteId,
-                                       Colors.Yellow,
-                                       PlayerLayer + 2,
-                                       0, 2,
-                                       Target_AI);
-                    // TODO: A muzzle flash that isn't shit...
-                    CreateParticle(World,
-                                   ShotPosition + V2(0.0f, -6.0f),
-                                   V2(0.0f, 0.0f),
-                                   1, 1.0f,
-                                   ColorSpec_None,
-                                   PlayerLayer + 1, TextureId_MuzzleFlash);
-                }
+                CreateBullet_Angle(GameState,
+                                   ShotPosition,
+                                   PerturbedAngle,
+                                   CurrentWeapon->FireSpeed,
+                                   0.0f, 0.0f,
+                                   0,
+                                   CurrentWeapon->ProjectileSpriteId,
+                                   Colors.Yellow,
+                                   PlayerLayer + 2,
+                                   0, 2,
+                                   Target_AI);
+                // TODO: A muzzle flash that isn't shit...
+                CreateParticle(World,
+                               ShotPosition + V2(0.0f, -6.0f),
+                               V2(0.0f, 0.0f),
+                               1, 1.0f,
+                               ColorSpec_None,
+                               PlayerLayer + 1, TextureId_MuzzleFlash);
             }
             CurrentWeapon->FireCooldownRemaining = CurrentWeapon->FireCooldown;
             CurrentWeapon->Offset_Kickback.Y = CurrentWeapon->FireKickback;
