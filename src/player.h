@@ -382,7 +382,7 @@ RenderSpriteArray(game_state* GameState,
             PushAnimation(GameState,
                           &Sprite->Animation,
                           TotalRenderOffset,
-                          1.0f, V2(0.0f, 0.0f), 0.0f,
+                          1.0f, V2(0.0f, 0.0f), V3(0.0f, 0.0f, 0.0f),
                           ColorSpec_None,
                           Layer, BlendMode_Blend);
         }

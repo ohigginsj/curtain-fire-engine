@@ -454,7 +454,7 @@ UpdateProjectiles(game_state* GameState,
                                       TextureId_BulletMap,
                                       DelaySprite->TextureRect,
                                       Projectile->Spatial.Position, 1.0f,
-                                      Center, 0.0f,
+                                      Center, V3(0.0f, 0.0f, 0.0f),
                                       ColorSpec(Color(Colors.White, DelayAlpha), ColorTint_Luminosity),
                                       Projectile->Layer, BulletSprite->DefaultBlendMode);
                     }
@@ -493,7 +493,7 @@ UpdateProjectiles(game_state* GameState,
                                       TextureId_BulletMap,
                                       BulletSprite->TextureRect,
                                       Projectile->Spatial.Position, 1.0f,
-                                      Center, Angle,
+                                      Center, V3(0.0f, 0.0f, Angle),
                                       Projectile->ColorSpec,
                                       Projectile->Layer, BulletSprite->DefaultBlendMode);
                     }
@@ -542,7 +542,7 @@ UpdateProjectiles(game_state* GameState,
                                       SourceRect,
                                       DestRect,
                                       Center,
-                                      LooseLaser->Angle - 90,
+                                      V3(0.0f, 0.0f, LooseLaser->Angle - 90),
                                       Projectile->ColorSpec,
                                       Projectile->Layer,
                                       BulletSprite->DefaultBlendMode);
@@ -580,7 +580,7 @@ UpdateProjectiles(game_state* GameState,
                                   SourceRect,
                                   DestRect,
                                   Center,
-                                  StraightLaser->Angle - 90,
+                                  V3(0.0f, 0.0f, StraightLaser->Angle - 90),
                                   Projectile->ColorSpec,
                                   Projectile->Layer, BulletSprite->DefaultBlendMode);
 
@@ -591,7 +591,7 @@ UpdateProjectiles(game_state* GameState,
                                   TextureId_BulletMap,
                                   GlowSprite->TextureRect,
                                   Projectile->Spatial.Position, 0.5f,
-                                  GlowCenter, 0.0f,
+                                  GlowCenter, V3(0.0f, 0.0f, 0.0f),
                                   Projectile->ColorSpec,
                                   Projectile->Layer, BulletSprite->DefaultBlendMode);
 

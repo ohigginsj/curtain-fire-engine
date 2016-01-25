@@ -149,6 +149,7 @@ struct game_input
     int32 MousePositionY;
 
     resize_window_command ResizeWindow;
+    bool32 ReloadedGameLibrary;
 
     real32 DeltaTime;
     real32 LastFrameFPS;

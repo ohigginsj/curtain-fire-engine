@@ -12,6 +12,13 @@ struct v2
     real32 Y;
 };
 
+struct v3
+{
+    real32 X;
+    real32 Y;
+    real32 Z;
+};
+
 union v4
 {
     struct
@@ -49,6 +56,10 @@ union rect
 };
 
 const real32 PI = 3.14159265358979323846f;
+
+//////////////////
+// Real Numbers //
+//////////////////
 
 inline int32
 RoundReal64(real64 Value)
@@ -245,6 +256,10 @@ GetGreatestMultipleLessThan(real32 Base, real32 Max)
 
     return Result;
 }
+
+//////////////
+// Vector 2 //
+//////////////
 
 inline v2
 V2(real32 X = 0.0f, real32 Y = 0.0f)
@@ -500,6 +515,26 @@ Distance(v2 A, v2 B)
     real32 Distance = DistanceSquared(A, B);
     return (real32)sqrt(Distance);
 }
+
+//////////////
+// Vector 3 //
+//////////////
+
+inline v3
+V3(real32 X = 0, real32 Y = 0, real32 Z = 0)
+{
+    v3 Result = {};
+
+    Result.X = X;
+    Result.Y = Y;
+    Result.Z = Z;
+
+    return Result;
+}
+
+////////////////
+// Rectangles //
+////////////////
 
 inline rect
 Rect(real32 X, real32 Y, real32 W, real32 H)

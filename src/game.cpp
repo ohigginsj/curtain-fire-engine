@@ -562,7 +562,7 @@ UpdateScrollingBackground(game_state* GameState,
                   SourceRect,
                   DestRect,
                   V2(0.0f, 0.0f),
-                  0.0f,
+                  V3(0.0f, 0.0f, 0.0f),
                   ColorSpec(Color(0.1f, 0.1f, 0.1f, 1.0f), ColorTint_Mod),
                   EngineLayer_Background,
                   BlendMode_Blend);
@@ -834,6 +834,11 @@ extern "C" {
 int32
 GameLoop(game_memory* GameMemory, game_input* Input)
 {
+    if (Input->ReloadedGameLibrary)
+    {
+        gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress);
+    }
+
     transient_state* TransientState = (transient_state*)GameMemory->TransientStorage;
     if (!TransientState->IsInitialized)
     {

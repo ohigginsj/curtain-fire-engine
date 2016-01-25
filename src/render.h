@@ -92,7 +92,7 @@ enum render_entry_type
 struct render_entry_texture
 {
     texture_id TextureId;
-    real32 Angle;
+    v3 Rotation;
     v2 Center;
     color_spec ColorSpec;
     rect SourceRect;
@@ -323,12 +323,14 @@ InitializeTextureRenderer(texture_renderer* Renderer,
 
     // Even though these will be set later, we allocate the correct size now
     glBindBuffer(GL_ARRAY_BUFFER, Renderer->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 4 * 6, 0, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 5, 0, GL_DYNAMIC_DRAW);
 
     // Bind VAO
     glBindVertexArray(Renderer->QuadVAO);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), 0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 
     // Unbind VAO
     glBindVertexArray(0);
@@ -743,7 +745,7 @@ PushTextureEx(renderer* Renderer,
               rect SourceRect,
               rect DestRect,
               v2 Center,
-              real32 Angle,
+              v3 Rotation,
               color_spec ColorSpec,
               int32 Layer,
               blend_mode BlendMode)
@@ -754,7 +756,7 @@ PushTextureEx(renderer* Renderer,
     render_entry_texture* TextureEntry = &NewEntry->Texture;
     TextureEntry->TextureId = TextureId;
     TextureEntry->Center = Center;
-    TextureEntry->Angle = Angle;
+    TextureEntry->Rotation = Rotation;
     TextureEntry->ColorSpec = ColorSpec;
     TextureEntry->SourceRect = SourceRect;
     TextureEntry->DestRect = DestRect;
@@ -771,7 +773,7 @@ PushTextureEx(renderer* Renderer,
               v2 Position,
               real32 Scale,
               v2 Center,
-              real32 Angle,
+              v3 Rotation,
               color_spec ColorSpec,
               int32 Layer,
               blend_mode BlendMode)
@@ -780,7 +782,7 @@ PushTextureEx(renderer* Renderer,
                                           V2(SourceRect.W, SourceRect.H),
                                           Scale);
     PushTextureEx(Renderer, TextureId, SourceRect, DestRect,
-                  Center, Angle, ColorSpec, Layer, BlendMode);
+                  Center, Rotation, ColorSpec, Layer, BlendMode);
 }
 
 void
@@ -797,7 +799,7 @@ PushTexture(renderer* Renderer,
                   Position,
                   Scale,
                   V2(0.0f, 0.0f),
-                  0.0f,
+                  V3(0.0f, 0.0f, 0.0f),
                   ColorSpec_None,
                   Layer,
                   BlendMode_Blend);
@@ -809,7 +811,7 @@ PushAnimation(game_state* GameState,
               v2 Position,
               real32 Scale,
               v2 Center,
-              real32 Angle,
+              v3 Rotation,
               color_spec ColorSpec,
               int32 Layer,
               blend_mode BlendMode)
@@ -821,8 +823,8 @@ PushAnimation(game_state* GameState,
                   SourceRect,
                   Position,
                   Scale,
-                  V2(0.0f, 0.0f),
-                  0.0f,
+                  Center,
+                  Rotation,
                   ColorSpec,
                   Layer,
                   BlendMode);
@@ -840,7 +842,7 @@ PushTexture(renderer* Renderer,
                   SourceRect,
                   DestRect,
                   V2(0.0f, 0.0f),
-                  0.0f,
+                  V3(0.0f, 0.0f, 0.0f),
                   ColorSpec_None,
                   Layer,
                   BlendMode_Blend);
@@ -852,7 +854,7 @@ PushSprite(game_state* GameState,
            v2 Position,
            real32 Scale,
            v2 Center,
-           real32 Angle,
+           v3 Rotation,
            color_spec ColorSpec,
            int32 Layer,
            blend_mode BlendMode)
@@ -865,7 +867,7 @@ PushSprite(game_state* GameState,
                       Position,
                       Scale,
                       V2(0.0f, 0.0f),
-                      0.0f,
+                      Rotation,
                       ColorSpec,
                       Layer,
                       BlendMode);
@@ -879,7 +881,7 @@ PushSprite(game_state* GameState,
                           Position,
                           Scale,
                           V2(0.0f, 0.0f),
-                          0.0f,
+                          Rotation,
                           ColorSpec,
                           Layer,
                           BlendMode);
@@ -1024,7 +1026,7 @@ Render(game_state* GameState)
 
     renderer* Renderer = GameState->Renderer;
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Sort the entries by Layer (insertion sort)
     render_entry* Entries = Renderer->Entries;
@@ -1059,14 +1061,6 @@ Render(game_state* GameState)
                 texture_renderer* TextureRenderer = &Renderer->TextureRenderer;
                 rect SourceRect = TextureEntry->SourceRect;
 
-                struct frame_point
-                {
-                    GLfloat X;
-                    GLfloat Y;
-                    GLfloat S;
-                    GLfloat T;
-                } FrameCoordinates[6];
-
                 real32 TextureCoordinateLeftX = SourceRect.X / (real32)Texture->Width;
                 real32 TextureCoordinateRightX = (SourceRect.X + SourceRect.W) / (real32)Texture->Width;
                 // TODO: Do this in the shader...
@@ -1081,46 +1075,24 @@ Render(game_state* GameState)
                     TextureCoordinateRightX = Temp;
                 }
 #endif
-                FrameCoordinates[0] = {
-                    0.0f,
-                    1.0f,
-                    TextureCoordinateLeftX,
-                    TextureCoordinateTopY
+                struct texture_data
+                {
+                    GLfloat X;
+                    GLfloat Y;
+                    GLfloat Z;
+
+                    GLfloat TextureX;
+                    GLfloat TextureY;
                 };
 
-                FrameCoordinates[1] = {
-                    0.0f,
-                    0.0f,
-                    TextureCoordinateLeftX,
-                    TextureCoordinateBottomY
-                };
+                texture_data TextureData[] = {
+                    { 0.0f, 1.0f, 0.0f, TextureCoordinateLeftX, TextureCoordinateTopY},
+                    { 0.0f, 0.0f, 0.0f, TextureCoordinateLeftX, TextureCoordinateBottomY},
+                    { 1.0f, 0.0f, 0.0f, TextureCoordinateRightX, TextureCoordinateBottomY},
 
-                FrameCoordinates[2] = {
-                    1.0f,
-                    0.0f,
-                    TextureCoordinateRightX,
-                    TextureCoordinateBottomY
-                };
-
-                FrameCoordinates[3] = {
-                    0.0f,
-                    1.0f,
-                    TextureCoordinateLeftX,
-                    TextureCoordinateTopY
-                };
-
-                FrameCoordinates[4] = {
-                    1.0f,
-                    0.0f,
-                    TextureCoordinateRightX,
-                    TextureCoordinateBottomY
-                };
-
-                FrameCoordinates[5] = {
-                    1.0f,
-                    1.0f,
-                    TextureCoordinateRightX,
-                    TextureCoordinateTopY
+                    { 0.0f, 1.0f, 0.0f, TextureCoordinateLeftX, TextureCoordinateTopY},
+                    { 1.0f, 0.0f, 0.0f, TextureCoordinateRightX, TextureCoordinateBottomY},
+                    { 1.0f, 1.0f, 0.0f, TextureCoordinateRightX, TextureCoordinateTopY},
                 };
 
                 if (TextureEntry->BlendMode == BlendMode_Add)
@@ -1137,7 +1109,8 @@ Render(game_state* GameState)
 
                 // Rotation about the center
                 Model = glm::translate(Model, glm::vec3(TextureEntry->Center.X, TextureEntry->Center.Y, 0.0f));
-                Model = glm::rotate(Model, DegreesToRadians(TextureEntry->Angle), glm::vec3(0.0f, 0.0f, 1.0f));
+                //Model = glm::rotate(Model, DegreesToRadians(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+                Model = glm::rotate(Model, DegreesToRadians(TextureEntry->Rotation.Z), glm::vec3(0.0f, 0.0f, 1.0f));
                 Model = glm::translate(Model, glm::vec3(-TextureEntry->Center.X, -TextureEntry->Center.Y, 0.0f));
 
                 // Scale
@@ -1153,7 +1126,7 @@ Render(game_state* GameState)
                 glBindVertexArray(TextureRenderer->QuadVAO);
                 // Update VBO
                 glBindBuffer(GL_ARRAY_BUFFER, TextureRenderer->VBO);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(FrameCoordinates), FrameCoordinates, GL_DYNAMIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(TextureData), TextureData, GL_DYNAMIC_DRAW);
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
                 // Draw
                 glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -1199,14 +1172,9 @@ Render(game_state* GameState)
                     GLfloat T;
                 };
 
-#if 0
-                glyph_point* GlyphCoordinates = new glyph_point[6 * strlen(TextEntry->Text)];
-#else
-                //glyph_point GlyphCoordinates[6 * strlen(TextEntry->Text)];
                 const int32 MaxGlyphCoordinates = 6 * RenderTextLengthMax;
                 int32 GlyphCoordinateCount = 6 * (int32)strlen(TextEntry->Text);
                 glyph_point GlyphCoordinates[MaxGlyphCoordinates];
-#endif
 
                 real32 Scale = 1.0f;
                 uint32 N = 0;
@@ -1275,9 +1243,8 @@ Render(game_state* GameState)
 
                 glBindVertexArray(TextRenderer->VAO);
                 glBindTexture(GL_TEXTURE_2D, TextRenderer->FontAtlas.TextureId);
-                // Bind VBO here to update it before drawing
-                glBindBuffer(GL_ARRAY_BUFFER, TextRenderer->VBO);
 
+                glBindBuffer(GL_ARRAY_BUFFER, TextRenderer->VBO);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(glyph_point) * GlyphCoordinateCount, GlyphCoordinates, GL_DYNAMIC_DRAW);
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
                 glDrawArrays(GL_TRIANGLES, 0, N);

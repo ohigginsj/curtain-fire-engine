@@ -201,7 +201,7 @@ UpdateParticles(game_state* GameState,
                        &Particle->Sprite,
                        Particle->Spatial.Position,
                        Particle->Scale,
-                       V2(0.0f, 0.0f), 0.0f,
+                       V2(0.0f, 0.0f), V3(0.0f, 0.0f, 0.0f),
                        Particle->ColorSpec,
                        Particle->Layer, BlendMode_Blend);
         }

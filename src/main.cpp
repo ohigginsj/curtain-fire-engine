@@ -48,6 +48,7 @@ PlatformMain
 
     glViewport(0, 0, LogicalWindowSizeX * WindowScale, LogicalWindowSizeY * WindowScale);
     glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Memory
@@ -80,14 +81,17 @@ PlatformMain
     bool32 FirstLoop = true;
     while (Running)
     {
+        game_input GameInput = {};
+
         file_time LibraryLastWriteTime = GetLastWriteTime(LibraryPath);
         if (FileTimesAreDifferent(LibraryLastWriteTime, GameCode.LastWriteTime))
         {
-            printf("Reloading library.\n");
+            printf("Reloading library... ");
             LoadGameCode(&GameCode, LibraryPath);
+            GameInput.ReloadedGameLibrary = true;
+            printf("Done.\n");
         }
 
-        game_input GameInput = {};
         const uint8* CurrentKeyState = SDL_GetKeyboardState(0);
         bool32 ControlDown = CurrentKeyState[SDL_SCANCODE_LCTRL];
         while (SDL_PollEvent(&Event))
