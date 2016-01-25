@@ -731,13 +731,6 @@ GetFullTextureRect(game_state* GameState,
     return Result;
 }
 
-v2
-GetTextureCenter(game_state* GameState, texture_id TextureId)
-{
-    texture* Texture = &GameState->Assets.Textures[TextureId];
-    return V2((real32)Texture->Width / 2.0f, (real32)Texture->Height / 2.0f);
-}
-
 // Centered
 void
 PushTextureEx(renderer* Renderer,
@@ -1109,7 +1102,8 @@ Render(game_state* GameState)
 
                 // Rotation about the center
                 Model = glm::translate(Model, glm::vec3(TextureEntry->Center.X, TextureEntry->Center.Y, 0.0f));
-                //Model = glm::rotate(Model, DegreesToRadians(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+                Model = glm::rotate(Model, DegreesToRadians(TextureEntry->Rotation.X), glm::vec3(1.0f, 0.0f, 0.0f));
+                Model = glm::rotate(Model, DegreesToRadians(TextureEntry->Rotation.Y), glm::vec3(0.0f, 1.0f, 0.0f));
                 Model = glm::rotate(Model, DegreesToRadians(TextureEntry->Rotation.Z), glm::vec3(0.0f, 0.0f, 1.0f));
                 Model = glm::translate(Model, glm::vec3(-TextureEntry->Center.X, -TextureEntry->Center.Y, 0.0f));
 

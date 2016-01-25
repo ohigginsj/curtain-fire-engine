@@ -571,7 +571,7 @@ operator+(rect& Rect, v2& Vector)
     return Result;
 }
 
-rect
+inline rect
 GetRectFromCenter(v2& Center, v2& HalfDimension)
 {
     rect Result = Rect(Center.X - HalfDimension.X,

@@ -913,7 +913,7 @@ GameLoop(game_memory* GameMemory, game_input* Input)
                                           (GLfloat)(LogicalWindowSizeX),
                                           (GLfloat)(LogicalWindowSizeY),
                                           0.0f,
-                                          -1.0f, 1.0f);
+                                          -1000.0f, 1000.0f);
         InitializeTextureRenderer(&GameState->Renderer->TextureRenderer, &GameState->Shaders[ShaderId_Sprite], Projection);
         InitializeTextRenderer(TransientState,
                                &GameState->Renderer->TextRenderer,

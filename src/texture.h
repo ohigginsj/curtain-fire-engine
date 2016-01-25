@@ -188,3 +188,10 @@ LoadScrollingBackground(game_state* GameState,
     texture* Texture = &GameState->Assets.Textures[TextureId];
     Background->SourceY = Texture->Height - WorldSizeY;
 }
+
+v2
+GetTextureCenter(game_state* GameState, texture_id TextureId)
+{
+    texture* Texture = &GameState->Assets.Textures[TextureId];
+    return V2((real32)Texture->Width / 2.0f, (real32)Texture->Height / 2.0f);
+}
