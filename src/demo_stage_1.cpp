@@ -629,8 +629,8 @@ UpdateStage1(game_state* GameState, int32 Time)
         boss* Boss = CreateBoss(GameState, 32.0f, 20.0f);
 
         AddBossAttack(Boss, BossBehavior_Cirno_Spell2, 400, TimeToFrames(90.0f));
-        AddBossAttack(Boss, BossBehavior_Kogasa_Spell3, 300, TimeToFrames(90.0f));
         AddBossAttack(Boss, BossBehavior_Meirin_Spell1, 400, TimeToFrames(90.0f));
+        AddBossAttack(Boss, BossBehavior_Kogasa_Spell3, 300, TimeToFrames(90.0f));
         //AddBossAttack(Boss, BossBehavior_Meirin_Spell3, 200, TimeToFrames(90.0f));
     }
 
