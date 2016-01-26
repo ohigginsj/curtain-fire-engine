@@ -45,7 +45,7 @@ const projectile_sprite_id MachineGun_ProjectileSpriteId = ProjectileSprite_Rice
 // Minigun
 const real32 Minigun_FireCooldown = 0.03f;
 const real32 Minigun_FireSpeed = 10.0f;
-const real32 Minigun_Inaccuracy = 10.0f;
+const real32 Minigun_Inaccuracy = 8.0f;
 const v2     Minigun_ShotOffsets[] = {
     V2(-12.0f, -8.0f),
     V2(12.0f, -8.0f)
