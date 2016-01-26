@@ -139,7 +139,9 @@ DefineGame(game_state* GameState)
     LoadTexture(GameState, TextureId_Explosion_0,       "data/graphics/particles/explosion_0.png", TextureFilter_Nearest);
     LoadTexture(GameState, TextureId_Explosion_1,       "data/graphics/particles/explosion_1.png", TextureFilter_Nearest);
     LoadTexture(GameState, TextureId_Explosion_2,       "data/graphics/particles/explosion_2.png", TextureFilter_Nearest);
-    LoadTexture(GameState, TextureId_Flare,             "data/graphics/particles/graze.png", TextureFilter_Linear);
+    LoadTexture(GameState, TextureId_Graze,             "data/graphics/particles/graze.png", TextureFilter_Linear);
+    LoadTexture(GameState, TextureId_Petal,             "data/graphics/particles/sakura.png", TextureFilter_Linear);
+    LoadTexture(GameState, TextureId_Burst,             "data/graphics/particles/burst.png", TextureFilter_Linear);
 
     // Background
     LoadScrollingBackground(GameState, TextureId_Background, 88, 200.0f);
@@ -238,4 +240,103 @@ DefineGame(game_state* GameState)
     DefineBulletSprite(GameState, ProjectileSprite_Dagger_Kouma, Rect(1, 47, 20, 30), 3.0f, Directionality_Angle, ColorTint_Luminosity, BlendMode_Blend);
     DefineBulletSprite(GameState, ProjectileSprite_Ball_L, Rect(56, 46, 62, 62), 3.0f, Directionality_Angle, ColorTint_Luminosity, BlendMode_Blend);
     DefineBulletSprite(GameState, ProjectileSprite_Delay, Rect(0, 107, 30, 31), 0.0f, Directionality_None, ColorTint_Luminosity, BlendMode_Add);
+}
+
+void
+ParticleBehavior_Petal(game_state* GameState,
+                       particle* Particle,
+                       int32 Time)
+{
+    Event_BeginTimer(Time);
+    Event_FromTo(0, Particle_GetTimeToLive(Particle), 1)
+    {
+        real32 Angle = GetStoredVariable(Particle, 0);
+        real32 Acceleration = GetStoredVariable(Particle, 1);
+        v3 RotationSpeed = V3(GetStoredVariable(Particle, 2),
+                              GetStoredVariable(Particle, 3),
+                              GetStoredVariable(Particle, 4));
+
+        Particle_ChangePosition(Particle, Event_LoopIteration * -Acceleration * V2(Cos(Angle), Sin(Angle)));
+        Particle_SetScale(Particle, 1.0f - Event_LoopIterationPercent);
+        Particle_SetAlpha(Particle, 1.0f - Event_LoopIterationPercent);
+        Particle_ChangeRotation(Particle, RotationSpeed);
+    }
+}
+
+void
+Petal(game_state* GameState,
+      v2 Position,
+      int32 ParticleTimeToLive,
+      int32 Time)
+{
+    v3 Rotation = V3(RandomRange(GameState, 360.0f),
+                     RandomRange(GameState, 360.0f),
+                     RandomRange(GameState, 360.0f));
+    v3 RotationSpeed = V3(RandomRange(GameState, -5.0f, 5.0f),
+                          RandomRange(GameState, -5.0f, 5.0f),
+                          RandomRange(GameState, -5.0f, 5.0f));
+    real32 AlphaChange = 0;
+    real32 Angle = RandomRange(GameState, 360.0f);
+    real32 Acceleration = RandomRange(GameState, 0.3f, 0.4f);
+    real32 DistanceFromCenter = Acceleration * Power(ParticleTimeToLive, 2) / 2.0f;
+    real32 Scale = 1.5f;
+    v2 PetalPosition = Position + (DistanceFromCenter * V2(Cos(Angle), Sin(Angle)));
+    particle* Petal = CreateParticle(GameState, PetalPosition, V2(0.0f, 0.0f), ParticleTimeToLive,
+                                     1.0f, ColorSpec_None, BlendMode_Add, 0, TextureId_Petal, ParticleBehavior_Petal);
+    Particle_SetRotation(Petal, Rotation);
+    SetStoredVariable(Petal, 0, Angle);
+    SetStoredVariable(Petal, 1, Acceleration);
+    SetStoredVariable(Petal, 2, RotationSpeed.X);
+    SetStoredVariable(Petal, 3, RotationSpeed.Y);
+    SetStoredVariable(Petal, 4, RotationSpeed.Z);
+}
+
+void
+ParticleBehavior_BurstCharge(game_state* GameState, particle* Particle, int32 Time)
+{
+    Event_BeginTimer(Time);
+    Event_At(0)
+    {
+        SetStoredVariable(Particle, 0, Particle_GetScale(Particle));
+    }
+
+    Event_FromTo(0, Particle_GetTimeToLive(Particle), 1)
+    {
+        real32 OriginalScale = GetStoredVariable(Particle, 0);
+        Particle_SetAlpha(Particle, Event_LoopIterationPercent);
+        Particle_SetScale(Particle, OriginalScale - (Event_LoopIterationPercent * OriginalScale));
+    }
+}
+
+void
+PetalCharge(game_state* GameState,
+            v2 Position,
+            int32 Time)
+{
+    Event_BeginTimer(Time);
+    Event_FromTo(0, 29, 1)
+    {
+        For(PetalIndex, 3)
+        {
+            Petal(GameState, Position, 30, Time);
+        }
+    }
+
+    Event_At(29)
+    {
+        CreateParticle(GameState,
+                       Position,
+                       V2(0.0f, 0.0f),
+                       30,
+                       4.0f,
+                       ColorSpec_None, BlendMode_Add,
+                       0,
+                       TextureId_Burst,
+                       ParticleBehavior_BurstCharge);
+
+        For(PetalIndex, 5)
+        {
+            Petal(GameState, Position, 30, Time);
+        }
+    }
 }

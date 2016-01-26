@@ -86,7 +86,9 @@ enum texture_id
     TextureId_Explosion_0,
     TextureId_Explosion_1,
     TextureId_Explosion_2,
-    TextureId_Flare,
+    TextureId_Graze,
+    TextureId_Petal,
+    TextureId_Burst,
 
     // Turn into a map
     TextureId_Particle_Smoke,

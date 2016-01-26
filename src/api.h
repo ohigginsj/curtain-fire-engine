@@ -13,7 +13,9 @@ struct game_state;
 struct boss;
 struct boss_attack;
 struct projectile;
+struct particle;
 typedef void (*projectile_update_function)(game_state* GameState, projectile* Projectile, int32 Time);
+typedef void (*particle_update_function)(game_state* GameState, particle* Particle, int32 Time);
 typedef void (*boss_behavior_function)(game_state* GameState, boss* Boss, int32 Time);
 typedef void (*world_update_function)(game_state* GameState, int32 Time);
 
@@ -183,6 +185,17 @@ void Projectile_SetAlpha(projectile* Projectile, real32 Alpha);
 void StraightLaser_SetAngle(projectile* Projectile, real32 Angle);
 real32 StraightLaser_GetAngle(projectile* Projectile);
 
+void Particle_SetPosition(particle* Particle, v2 Position);
+void Particle_ChangePosition(particle* Particle, v2 DeltaPosition);
+void Particle_SetAlpha(particle* Particle, real32 Alpha);
+real32 Particle_GetScale(particle* Particle);
+void Particle_SetScale(particle* Particle, real32 Scale);
+void Particle_SetRotation(particle* Particle, v3 Rotation);
+void Particle_ChangeRotation(particle* Particle, v3 DeltaRotation);
+int32 Particle_GetTimeToLive(particle* Particle);
+real32 GetStoredVariable(particle* Particle, uint32 Number);
+void SetStoredVariable(particle* Particle, uint32 Number, real32 Value);
+
 v2 GetPosition(boss* Boss);
 void SetPosition(boss* Boss, v2 Position);
 bool32 IsActive(boss* Boss);
@@ -257,6 +270,18 @@ CreateStraightLaser(game_state* GameState,
                     color Color,
                     int32 Layer,
                     projectile_update_function UpdateFunction);
+
+particle*
+CreateParticle(game_state* GameState,
+               v2 Position,
+               v2 Velocity,
+               int32 TimeToLive,
+               real32 Scale,
+               color_spec ColorSpec,
+               blend_mode BlendMode,
+               int32 Layer,
+               texture_id TextureId,
+               particle_update_function UpdateFunction);
 
 #define Event_BeginTimer(StartTime) \
     int32 Timer = StartTime; \

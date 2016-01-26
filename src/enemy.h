@@ -159,13 +159,14 @@ AddBossAttack(boss* Boss, boss_behavior_function Behavior, int32 Health, int32 D
 }
 
 void
-HitEnemy(game_mode_world* World, enemy* Enemy, int32 Damage)
+HitEnemy(game_state* GameState, enemy* Enemy, int32 Damage)
 {
+    game_mode_world* World = GameState->World;
     Enemy->Health -= Damage;
     if (Enemy->Health <= 0)
     {
         DestroyEnemy(World, Enemy);
-        CreateExplosion2(World,
+        CreateExplosion2(GameState,
                          Enemy->Spatial.Position);
     }
 }
@@ -183,7 +184,7 @@ HitBoss(game_state* GameState, int32 Damage)
     boss* Boss = World->Boss;
 
     //PlayRandomSound(GameState, SoundGroupId_Impact);
-    CreateExplosion2(World,
+    CreateExplosion2(GameState,
                      Boss->Spatial.Position + V2(RandomPerturb(GameState, 0.0f, Boss->DamageCollisionArea.Radius),
                                                  RandomPerturb(GameState, 0.0f, Boss->DamageCollisionArea.Radius)));
 

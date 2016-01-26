@@ -532,6 +532,25 @@ V3(real32 X = 0, real32 Y = 0, real32 Z = 0)
     return Result;
 }
 
+inline v3
+operator+(v3 A, v3 B)
+{
+    v3 Result;
+
+    Result.X = A.X + B.X;
+    Result.Y = A.Y + B.Y;
+
+    return(Result);
+}
+
+inline v3 &
+operator+=(v3 &A, v3 B)
+{
+    A = A + B;
+
+    return(A);
+}
+
 ////////////////
 // Rectangles //
 ////////////////

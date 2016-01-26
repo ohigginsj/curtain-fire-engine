@@ -40,8 +40,6 @@ struct loose_laser
     real32 Width;
 };
 
-const int32 ProjectileStorageSize = 8;
-
 struct projectile
 {
     bool32 Active;

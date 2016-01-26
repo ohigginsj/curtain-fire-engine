@@ -344,13 +344,13 @@ KillShip(game_state* GameState)
     spatial* ShipSpatial = &Ship->Spatial;
 
     ScreenShake(GameState->Renderer, 3.0f, 0.4f);
-    CreateParticle_Animated(World,
+    CreateParticle_Animated(GameState,
                             ShipSpatial->Position,
                             V2(0.0f, 0.0f),
                             15, 1.0f,
-                            ColorSpec_None,
+                            ColorSpec_None, BlendMode_Blend,
                             50,
-                            AnimationSpecId_Explosion_0);
+                            AnimationSpecId_Explosion_0, 0);
 
     Ship->Dead = true;
     World->ControlMode = ControlMode_DeathAnimation;
@@ -607,12 +607,12 @@ UpdatePlayer(game_state* GameState,
                                    0, 2,
                                    Target_AI);
                 // TODO: A muzzle flash that isn't shit...
-                CreateParticle(World,
+                CreateParticle(GameState,
                                ShotPosition + V2(0.0f, -6.0f),
                                V2(0.0f, 0.0f),
                                1, 1.0f,
-                               ColorSpec_None,
-                               PlayerLayer + 1, TextureId_MuzzleFlash);
+                               ColorSpec_None, BlendMode_Blend,
+                               PlayerLayer + 1, TextureId_MuzzleFlash, 0);
             }
             CurrentWeapon->FireCooldownRemaining = CurrentWeapon->FireCooldown;
             CurrentWeapon->Offset_Kickback.Y = CurrentWeapon->FireKickback;

@@ -167,6 +167,8 @@ const uint32 ProjectileCountMax = 4096;
 const uint32 ParticleCountMax = 1024;
 const uint32 EnemyCountMax = 32;
 
+const int32 ProjectileStorageSize = 8;
+
 const v2 LooseLaserCollisionFactor = V2(0.2f, 0.7f);
 const v2 StraightLaserCollisionFactor = V2(0.4f, 1.0f);
 const int32 ProjectileFadeTime = 12;
@@ -325,7 +327,8 @@ RandomRange(game_state* GameState, real32 Max)
 inline real32
 RandomRange(game_state* GameState, real32 Min, real32 Max)
 {
-    real32 Result = Min + RandomRange(GameState, Max);
+    Assert("Min must be less than max", Min <= Max);
+    real32 Result = Min + RandomRange(GameState, Max - Min);
     return Result;
 }
 

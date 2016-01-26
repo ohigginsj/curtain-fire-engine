@@ -141,6 +141,7 @@ BossBehavior_Cirno_Spell2(game_state* GameState, boss* Boss, int32 Time)
         {
             PlaySound(GameState, SoundId_ChargeC, 1.0f);
         }
+        PetalCharge(GameState, GetPosition(Boss), Timer - 120);
 
         Event_FromTo(270, 300, 3)
         {
@@ -283,6 +284,7 @@ BossBehavior_Kogasa_Spell3(game_state* GameState, boss* Boss, int32 Time)
                 SetStoredVariable(Projectile, 1, -180.0f + 360.0f * ((real32)LaserIndex + 0.5f) / (real32)LaserCount);
             }
         }
+        PetalCharge(GameState, GetPosition(Boss), Timer);
 
         Event_At(LaserDelay)
         {
@@ -513,6 +515,7 @@ BossBehavior_Meirin_Spell3(game_state* GameState, boss* Boss, int32 Time)
         real32 DirectionModifier = 1.0f;
         SetStoredVariable(Boss, 1, DirectionModifier);
     }
+    PetalCharge(GameState, GetPosition(Boss), Timer);
 
     real32 AngleToPlayer = GetStoredVariable(Boss, 0);
     real32 DirectionModifier = GetStoredVariable(Boss, 1);
